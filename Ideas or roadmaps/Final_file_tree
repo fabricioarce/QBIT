@@ -1,0 +1,75 @@
+mi_bot_discord/
+├── Cargo.toml
+├── .env                          # Variables de entorno (tokens, DB URL)
+├── .gitignore
+│
+├── src/
+│   ├── main.rs                   # Entry point, inicialización
+│   ├── lib.rs                    # Exporta módulos públicos
+│   │
+│   ├── bot/
+│   │   ├── mod.rs                # Configuración del bot
+│   │   ├── handler.rs            # EventHandler principal
+│   │   └── context.rs            # BotContext compartido (DB, API clients)
+│   │
+│   ├── commands/
+│   │   ├── mod.rs                # Registro de comandos
+│   │   ├── codeforces/
+│   │   │   ├── mod.rs
+│   │   │   ├── problem.rs        # !problema, !random_problem
+│   │   │   ├── solved.rs         # !solved <problema>
+│   │   │   └── leaderboard.rs    # !ranking, !stats
+│   │   ├── economy/
+│   │   │   ├── mod.rs
+│   │   │   ├── shop.rs           # !tienda, !comprar
+│   │   │   ├── balance.rs        # !puntos, !balance
+│   │   │   └── admin.rs          # !dar_puntos (admin only)
+│   │   ├── moderation/
+│   │   │   ├── mod.rs
+│   │   │   ├── strikes.rs        # !warn, !strikes
+│   │   │   ├── kick_ban.rs       # !kick, !ban
+│   │   │   └── clear.rs          # !clear
+│   │   └── utility/
+│   │       ├── mod.rs
+│   │       ├── help.rs           # !help
+│   │       └── ping.rs           # !ping
+│   │
+│   ├── services/
+│   │   ├── mod.rs
+│   │   ├── codeforces/
+│   │   │   ├── mod.rs
+│   │   │   ├── client.rs         # Cliente API de Codeforces
+│   │   │   ├── models.rs         # Structs: Problem, User, Submission
+│   │   │   └── cache.rs          # Cache de problemas en memoria
+│   │   └── daily_problem.rs      # Scheduler para problema diario
+│   │
+│   ├── database/
+│   │   ├── mod.rs
+│   │   ├── connection.rs         # Pool de conexiones PostgreSQL
+│   │   ├── models.rs             # Structs de DB (User, Strike, Purchase)
+│   │   ├── schema.rs             # Definición de tablas (opcional con Diesel)
+│   │   └── queries/
+│   │       ├── mod.rs
+│   │       ├── users.rs          # CRUD usuarios
+│   │       ├── strikes.rs        # CRUD strikes
+│   │       ├── economy.rs        # CRUD puntos y compras
+│   │       └── problems.rs       # CRUD problemas resueltos
+│   │
+│   ├── tasks/
+│   │   ├── mod.rs
+│   │   ├── daily_problem.rs      # Tarea programada diaria
+│   │   └── scheduler.rs          # Sistema de tareas cron-like
+│   │
+│   └── utils/
+│       ├── mod.rs
+│       ├── embed_builder.rs      # Helpers para Discord embeds
+│       ├── permissions.rs        # Verificación de permisos
+│       └── error.rs              # Custom error types
+│
+├── migrations/                    # Migraciones SQL de PostgreSQL
+│   ├── 001_initial_schema.sql
+│   ├── 002_add_economy.sql
+│   └── 003_add_solved_problems.sql
+│
+└── config/
+    └── config.toml               # Configuración del bot (opcional)
