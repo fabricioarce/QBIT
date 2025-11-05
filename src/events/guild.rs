@@ -21,6 +21,8 @@ pub async fn handle_guild_create(
                 daily_channel_id BIGINT,
                 daily_hour INT,
                 daily_minute INT,
+                min_rating INT DEFAULT 800,
+                max_rating INT DEFAULT 2000,
                 level_system_enabled BOOLEAN DEFAULT true,
             )"
         )
