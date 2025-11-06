@@ -10,3 +10,7 @@ dotenvy = "0.15"          # Para leer variables de entorno (.env)
 sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres"] } # para PostgreSQL
 anyhow = "1.0.100"
 arc = "0.0.1"
+chrono = "0.4.42"
+rand = "0.9.2"
+reqwest = { version = "0.12.24", features = ["json"] }
+serde = "1.0.228"

@@ -1,12 +1,13 @@
-use serenity::client::Context;
+use serenity::http::Http;
 use serenity::model::guild::Guild;
+use std::sync::Arc;
 use crate::Bot;
 
 pub async fn handle_guild_create(
     bot: &Bot, 
-    _ctx: &Context, 
+    _http: &Arc<Http>, 
     guild: Guild,
-    is_new: option<bool>,
+    is_new: Option<bool>,
 ) {
     println!("Guild created: {} (ID: {})", guild.name, guild.id);
 
@@ -23,7 +24,7 @@ pub async fn handle_guild_create(
                 daily_minute INT,
                 min_rating INT DEFAULT 800,
                 max_rating INT DEFAULT 2000,
-                level_system_enabled BOOLEAN DEFAULT true,
+                level_system_enabled BOOLEAN DEFAULT true
             )"
         )
         .execute(&bot.db)

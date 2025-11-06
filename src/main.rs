@@ -9,6 +9,9 @@ use std::sync::Arc;
 
 // import Modules
 
+mod events;
+mod tasks;
+mod api;
 
 // Define principal bot
 pub struct Bot {
@@ -24,16 +27,30 @@ struct Handler {
 #[async_trait]
 impl EventHandler for Handler {
     // Confrim connected bot to discord 
-    async fn ready(&self, _ctx: Context, ready: Ready) {
+    async fn ready(&self, ctx: Context, ready: Ready) {
         println!("Bot connected as {} with the id of {}", ready.user.name, ready.user.id);
 
-        //Initialize daily tasks
-        //let bot = Arc::clone(&self.bot);
-        //let ctx_clone = ctx.clone();
-        //tokio::spawn(async move {
-        //     tasks::daily_tasks::start_daily_tasks(bot).await();
-        //};
+        let bot = Arc::clone(&self.bot);
+        let ctx_http = Arc::clone(&ctx.http);
+        
+        tokio::spawn(async move {
+            if let Err(e) = tasks::daily::start_daily_task(bot, ctx_http).await {
+                eprintln!("Daily task error: {}", e);
+            }
+        });
     }
+
+    //async fn message(&self, ctx: Context, msg: Message) {
+    //    events::message::handle_message(&self.bot, &ctx.http, msg).await;
+    //}
+
+    async fn guild_create(&self, ctx: Context, guild: Guild, is_new: Option<bool>) {
+        events::guild::handle_guild_create(&self.bot, &ctx.http, guild, is_new).await;
+    }
+
+    //async fn guild_member_addition(&self, ctx: Context, new_member: Member) {
+    //    events::member::handle_member_join(&self.bot, &ctx.http, new_member).await;
+    //}
 }
 
 // Main function to initialize the bot
@@ -65,7 +82,6 @@ async fn main() -> anyhow::Result<()> {
     if let Err(why) = client.start().await {
         println!("Error al iniciar el bot: {:?}", why);
     }
-    client.start().await?;
 
     Ok(())
 }

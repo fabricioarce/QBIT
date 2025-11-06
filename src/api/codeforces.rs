@@ -2,29 +2,29 @@ use reqwest::{Client, header};
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
-struct Codeforces{
-    status: String,
-    result: ResultData,
+pub struct Codeforces{
+    pub status: String,
+    pub result: ResultData,
 }
 
 #[derive(Deserialize, Debug)]
-struct ResultData{
-    problems: Vec<Problem>,
+pub struct ResultData{
+    pub problems: Vec<Problem>,
 }
 
 #[derive(Deserialize, Debug)]
-struct Problem{
-    contestId: Option<u32>,
-    index: String,
-    name: String,
+pub struct Problem{
+    pub contest_id: Option<u32>,
+    pub index: String,
+    pub name: String,
     #[serde(rename = "type")]
-    problem_type: String,
-    points: Option<f32>,
-    rating: Option<u32>,
-    tags: Vec<String>,
+    pub problem_type: String,
+    pub points: Option<f32>,
+    pub rating: Option<u32>,
+    pub tags: Vec<String>,
 }
 
-pub async fn get_problems(min_rating: Option<u32>, max_rating: Option<u32>) -> Result<Codeforces, Box<dyn std::error::Error>> {
+pub async fn get_problems(min_rating: Option<u32>, max_rating: Option<u32>) -> Result<Codeforces, Box<dyn std::error::Error + Send + Sync>> {
     
     let client = Client::new();
     let url = "https://codeforces.com/api/problemset.problems";
@@ -41,11 +41,16 @@ pub async fn get_problems(min_rating: Option<u32>, max_rating: Option<u32>) -> R
     if min_rating.is_some() || max_rating.is_some() {
         response.result.problems.retain(|problem| {
             if let Some(rating) = problem.rating {
-                match (min_rating, max_rating) {
-                    (Some(min), Some(max)) => rating >= min && rating <= max,
-                    (Some(min), None) => rating >= min,
-                    (None, Some(max)) => rating <= max,
-                    (None, None) => true,
+                if let Some(min) = min_rating {
+                    if let Some(max) = max_rating {
+                        rating >= min && rating <= max
+                    } else {
+                        rating >= min
+                    }
+                } else if let Some(max) = max_rating {
+                    rating <= max
+                } else {
+                    true
                 }
             } else {
                 false // Skip problems without rating
