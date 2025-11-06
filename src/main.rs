@@ -77,7 +77,7 @@ async fn main() -> anyhow::Result<()> {
                 daily_hour INT,
                 daily_minute INT,
                 min_rating INT DEFAULT 800,
-                max_rating INT DEFAULT 2000,
+                max_rating INT DEFAULT 1200,
                 level_system_enabled BOOLEAN DEFAULT true
             )"
         )

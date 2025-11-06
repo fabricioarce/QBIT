@@ -51,7 +51,7 @@ pub async fn start_daily_task(bot: Arc<Bot>, http: Arc<Http>) -> Result<(), Box<
 
                 // Get rating range from server config
                 let min_rating = server.try_get::<Option<i32>, _>("min_rating").unwrap_or_default().unwrap_or(800);
-                let max_rating = server.try_get::<Option<i32>, _>("max_rating").unwrap_or_default().unwrap_or(2000);
+                let max_rating = server.try_get::<Option<i32>, _>("max_rating").unwrap_or_default().unwrap_or(1200);
 
                 // Fetch problems from Codeforces API with server's rating range
                 let problems_result = api::codeforces::get_problems(Some(min_rating as u32), Some(max_rating as u32)).await;
@@ -84,11 +84,11 @@ pub async fn start_daily_task(bot: Arc<Bot>, http: Arc<Http>) -> Result<(), Box<
                             // Create difficulty bars based on rating
                             let rating = problem.rating.unwrap_or(0);
                             let difficulty_bars = match rating {
-                                r if r <= 1000 => "█".repeat(1),
-                                r if r <= 1400 => "█".repeat(2),
-                                r if r <= 1800 => "█".repeat(3),
-                                r if r <= 2200 => "█".repeat(4),
-                                _ => "█".repeat(5),
+                                r if r <= 1000 => "🟩".repeat(1),
+                                r if r <= 1400 => "🟩".repeat(2),
+                                r if r <= 1800 => "🟩".repeat(3),
+                                r if r <= 2200 => "🟩".repeat(4),
+                                _ => "🟩".repeat(5),
                             };
 
                             // Format tags
