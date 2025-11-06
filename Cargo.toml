@@ -3,14 +3,33 @@ name = "bot-olim-p-code"
 version = "0.1.0"
 edition = "2024"
 
+
 [dependencies]
-serenity = { version = "0.12", features = ["framework", "gateway", "client", "standard_framework"] }
-tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
-dotenvy = "0.15"          # Para leer variables de entorno (.env)
-sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres"] } # para PostgreSQL
+# Discord bot
+serenity = { version = "0.12.2", features = ["framework", "gateway", "client", "standard_framework"] }
+
+# Async runtime
+tokio = { version = "1.34", features = ["macros", "rt-multi-thread"] }
+
+# Environment variables
+dotenvy = "0.15"
+
+# PostgreSQL
+sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres"] }
+
+# Error handling
 anyhow = "1.0.100"
-arc = "0.0.1"
+
+# Utilities
 chrono = "0.4.42"
-rand = "0.9.2"
+arc = "0.0.1"
+
+# HTTP requests
 reqwest = { version = "0.12.24", features = ["json"] }
-serde = "1.0.228"
+
+# Serialization
+serde = { version = "1.0.228", features = ["derive"] }
+
+# Random number generation aligned to rand_core 0.9.3
+rand = { version = "0.9.2", features = ["std", "os_rng"] }
+rand_chacha = "0.9.0"

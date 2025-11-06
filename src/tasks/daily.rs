@@ -121,7 +121,7 @@ pub async fn start_daily_task(bot: Arc<Bot>, http: Arc<Http>) -> Result<(), Box<
                                       false);
 
                             let message = serenity::builder::CreateMessage::new()
-                                .content(format!("Hello <@&{}>! Here's your daily problem:", guild_id))
+                                .content(format!("Hello <&{}>! Here's your daily problem:", guild_id))
                                 .embed(embed);
 
                             if let Err(why) = ChannelId::new(channel_id as u64).send_message(&http, message).await {

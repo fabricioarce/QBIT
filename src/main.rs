@@ -42,7 +42,7 @@ impl EventHandler for Handler {
     }
 
     async fn message(&self, ctx: Context, msg: Message) {
-        events::message::handle_message(&self.bot, ctx, msg).await;
+        events::message::handle_message(&self.bot, &ctx.http, msg).await;
     }
 
     async fn guild_create(&self, ctx: Context, guild: Guild, is_new: Option<bool>) {

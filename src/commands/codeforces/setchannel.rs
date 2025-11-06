@@ -1,8 +1,9 @@
-use serenity::client::Context;
+use serenity::http::Http;
 use serenity::model::channel::Message;
+use std::sync::Arc;
 use sqlx::PgPool;
 
-pub async fn execute(ctx: &Context, msg: &Message, db: &PgPool) -> Result<(), serenity::Error> {
+pub async fn execute(http: &Arc<Http>, msg: &Message, db: &PgPool) -> Result<(), serenity::Error> {
     // Extraer la mención del canal
     let mention = msg.content["!setchannel ".len()..].trim();
 
@@ -25,18 +26,18 @@ pub async fn execute(ctx: &Context, msg: &Message, db: &PgPool) -> Result<(), se
             match result {
                 Ok(_) => {
                     let response = format!("✅ Canal del reporte diario configurado a <#{}>", channel_id);
-                    msg.channel_id.say(&ctx.http, response).await?;
+                    msg.channel_id.say(http, response).await?;
                 }
-                Err(e) => {
-                    println!("Error guardando canal: {:?}", e);
-                    msg.channel_id.say(&ctx.http, "❌ Error al guardar el canal").await?;
+                Err(_) => {
+                    println!("Error guardando canal");
+                    msg.channel_id.say(http, "❌ Error al guardar el canal").await?;
                 }
             }
         } else {
-            msg.channel_id.say(&ctx.http, "❌ ID de canal inválido").await?;
+            msg.channel_id.say(http, "❌ ID de canal inválido").await?;
         }
     } else {
-        msg.channel_id.say(&ctx.http, "❌ Formato incorrecto. Usa: !setchannel #canal").await?;
+        msg.channel_id.say(http, "❌ Formato incorrecto. Usa: !setchannel #canal").await?;
     }
 
     Ok(())

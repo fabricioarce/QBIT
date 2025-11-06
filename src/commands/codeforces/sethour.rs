@@ -1,8 +1,9 @@
-use serenity::client::Context;
+use serenity::http::Http;
 use serenity::model::channel::Message;
+use std::sync::Arc;
 use sqlx::PgPool;
 
-pub async fn execute(ctx: &Context, msg: &Message, db: &PgPool) -> Result<(), serenity::Error> {
+pub async fn execute(http: &Arc<Http>, msg: &Message, db: &PgPool) -> Result<(), serenity::Error> {
     // Extraer la hora después del comando
     let hora = msg.content["!sethora ".len()..].trim();
 
@@ -28,21 +29,21 @@ pub async fn execute(ctx: &Context, msg: &Message, db: &PgPool) -> Result<(), se
                             "⏰ Hora del reporte diario configurada a las {:02}:{:02}",
                             horas, minutos
                         );
-                        msg.channel_id.say(&ctx.http, response).await?;
+                        msg.channel_id.say(http, response).await?;
                     }
-                    Err(e) => {
-                        println!("Error guardando hora: {:?}", e);
-                        msg.channel_id.say(&ctx.http, "❌ Error al guardar la hora").await?;
+                    Err(_) => {
+                        println!("Error guardando hora");
+                        msg.channel_id.say(http, "❌ Error al guardar la hora").await?;
                     }
                 }
             } else {
-                msg.channel_id.say(&ctx.http, "❌ Hora inválida. Usa formato HH:MM (00:00 - 23:59)").await?;
+                msg.channel_id.say(http, "❌ Hora inválida. Usa formato HH:MM (00:00 - 23:59)").await?;
             }
         } else {
-            msg.channel_id.say(&ctx.http, "❌ Formato incorrecto. Usa: !sethora HH:MM (ejemplo: !sethora 09:00)").await?;
+            msg.channel_id.say(http, "❌ Formato incorrecto. Usa: !sethora HH:MM (ejemplo: !sethora 09:00)").await?;
         }
     } else {
-        msg.channel_id.say(&ctx.http, "❌ Formato incorrecto. Usa: !sethora HH:MM (ejemplo: !sethora 09:00)").await?;
+        msg.channel_id.say(http, "❌ Formato incorrecto. Usa: !sethora HH:MM (ejemplo: !sethora 09:00)").await?;
     }
 
     Ok(())
