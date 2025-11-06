@@ -29,7 +29,7 @@ pub async fn execute(http: &Arc<Http>, msg: &Message, db: &PgPool) -> Result<(),
                     
                     // Shuffle in a separate scope to drop RNG before await
                     {
-                        let mut rng = rand::thread_rng();
+                        let mut rng = rand::rng();
                         filtered_problems.shuffle(&mut rng);
                     } // RNG dropped here
 
