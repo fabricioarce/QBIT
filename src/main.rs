@@ -12,6 +12,7 @@ use std::sync::Arc;
 mod events;
 mod tasks;
 mod api;
+mod commands;
 
 // Define principal bot
 pub struct Bot {
@@ -40,9 +41,9 @@ impl EventHandler for Handler {
         });
     }
 
-    //async fn message(&self, ctx: Context, msg: Message) {
-    //    events::message::handle_message(&self.bot, &ctx.http, msg).await;
-    //}
+    async fn message(&self, ctx: Context, msg: Message) {
+        events::message::handle_message(&self.bot, ctx, msg).await;
+    }
 
     async fn guild_create(&self, ctx: Context, guild: Guild, is_new: Option<bool>) {
         events::guild::handle_guild_create(&self.bot, &ctx.http, guild, is_new).await;
@@ -65,6 +66,23 @@ async fn main() -> anyhow::Result<()> {
     // Connect to the database
     let db = PgPool::connect(&db_url).await?;
     println!("Conectado a la base de datos ✅");
+
+        let _ = sqlx::query!(
+            "CREATE TABLE IF NOT EXISTS guild_config (
+                guild_id BIGINT PRIMARY KEY,
+                guild_name TEXT,
+                guild_prefix TEXT DEFAULT '!',
+                welcome_channel_id BIGINT,
+                daily_channel_id BIGINT,
+                daily_hour INT,
+                daily_minute INT,
+                min_rating INT DEFAULT 800,
+                max_rating INT DEFAULT 2000,
+                level_system_enabled BOOLEAN DEFAULT true
+            )"
+        )
+        .execute(&db)
+        .await?;
 
     // Initialize the bot struct
     let bot = Arc::new(Bot { db });

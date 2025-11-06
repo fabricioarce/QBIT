@@ -1,35 +1,31 @@
-use serenity::http::Http;
 use serenity::model::guild::Guild;
-use std::sync::Arc;
 use crate::Bot;
 
 pub async fn handle_guild_create(
     bot: &Bot, 
-    _http: &Arc<Http>, 
-    guild: Guild,
-    is_new: Option<bool>,
+    ctx_http: &serenity::http::Http, 
+    guild: Guild, 
+    is_new: Option<bool>
 ) {
+    let _ = ctx_http;
     println!("Guild created: {} (ID: {})", guild.name, guild.id);
 
-    // Check if the guild is new and perform any initialization if necessary
-    if is_new.unwrap_or(false) {
-        let _ = sqlx::query!(
-            "CREATE TABLE IF NOT EXISTS guild_config (
-                guild_id BIGINT PRIMARY KEY,
-                guild_name TEXT,
-                guild_prefix TEXT DEFAULT '!',
-                welcome_channel_id BIGINT,
-                daily_channel_id BIGINT,
-                daily_hour INT,
-                daily_minute INT,
-                min_rating INT DEFAULT 800,
-                max_rating INT DEFAULT 2000,
-                level_system_enabled BOOLEAN DEFAULT true
-            )"
-        )
-        .execute(&bot.db)
-        .await;
+    // Lógica de la base de datos igual
+    let _ = sqlx::query(
+        "INSERT INTO guild_config (guild_id, guild_name)
+        VALUES ($1, $2)
+        ON CONFLICT (guild_id) DO NOTHING"
+    )
+    .bind(guild.id.get() as i64)
+    .bind(&guild.name)
+    .execute(&bot.db)
+    .await
+    .expect("Error insertando guild en la base de datos");
 
-        println!("Tables created for {}", guild.name);
+    println!("Guild entry asegurada en la base de datos ✅");
+
+    // Ejemplo de uso de is_new
+    if let Some(true) = is_new {
+        println!("Este guild es nuevo para el bot!");
     }
 }
