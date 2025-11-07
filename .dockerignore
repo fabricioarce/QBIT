@@ -1,19 +1,24 @@
-# dev files
+# Archivos de desarrollo
 target/
 .git/
 .gitignore
 .env
 *.log
 
-# Dependecies and Cache
-Cargo.lock
-**/.DS_Store
-
 # Documentación
-README.md
 docs/
+README.md
+*.md
 
 # Archivos temporales
 *.swp
 *.swo
 *~
+**/.DS_Store
+
+# Archivos de Cargo
+Cargo.lock
+
+# Otros
+.vscode/
+.idea/

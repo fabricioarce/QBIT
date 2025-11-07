@@ -21,8 +21,6 @@ RUN mkdir src && \
 
 # Copiar el código fuente real
 COPY src ./src
-COPY migrations ./migrations
-COPY config ./config
 
 # Compilar la aplicación (las dependencias ya están en cache)
 RUN touch src/main.rs && \
@@ -44,11 +42,7 @@ RUN useradd -m -u 1000 botuser
 WORKDIR /app
 
 # Copiar el binario compilado desde el build stage
-COPY --from=builder /app/target/release/mi_bot_discord .
-
-# Copiar archivos de configuración y migraciones
-COPY --from=builder /app/migrations ./migrations
-COPY --from=builder /app/config ./config
+COPY --from=builder /app/target/release/bot-olim-p-code .
 
 # Cambiar permisos
 RUN chown -R botuser:botuser /app
@@ -56,7 +50,5 @@ RUN chown -R botuser:botuser /app
 # Cambiar a usuario no-root
 USER botuser
 
-# Exponer puerto (opcional, si el bot tiene una API)
-# EXPOSE 8080
-
-# Coma
+# Comando para ejecutar el bot
+CMD ["./bot-olim-p-code"]
