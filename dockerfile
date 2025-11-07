@@ -10,8 +10,8 @@ RUN apt-get update && apt-get install -y \
 # Crear directorio de trabajo
 WORKDIR /app
 
-# Copiar archivos de dependencias primero (para cache de Docker)
-COPY Cargo.toml Cargo.lock ./
+# Copiar solo Cargo.toml primero
+COPY Cargo.toml ./
 
 # Crear un proyecto dummy para compilar dependencias
 RUN mkdir src && \
