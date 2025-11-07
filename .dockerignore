@@ -1,0 +1,19 @@
+# dev files
+target/
+.git/
+.gitignore
+.env
+*.log
+
+# Dependecies and Cache
+Cargo.lock
+**/.DS_Store
+
+# Documentación
+README.md
+docs/
+
+# Archivos temporales
+*.swp
+*.swo
+*~
