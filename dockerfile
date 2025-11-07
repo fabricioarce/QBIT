@@ -10,21 +10,12 @@ RUN apt-get update && apt-get install -y \
 # Crear directorio de trabajo
 WORKDIR /app
 
-# Copiar solo Cargo.toml primero
+# Copiar todo el código fuente
 COPY Cargo.toml ./
-
-# Crear un proyecto dummy para compilar dependencias
-RUN mkdir src && \
-    echo "fn main() {}" > src/main.rs && \
-    cargo build --release && \
-    rm -rf src
-
-# Copiar el código fuente real
 COPY src ./src
 
-# Compilar la aplicación (las dependencias ya están en cache)
-RUN touch src/main.rs && \
-    cargo build --release
+# Compilar la aplicación
+RUN cargo build --release
 
 # Runtime stage
 FROM debian:bookworm-slim
