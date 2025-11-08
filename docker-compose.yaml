@@ -1,44 +1,41 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: bot_postgres
-    environment:
-      POSTGRES_DB: discord_bot
-      POSTGRES_USER: botuser
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    networks:
-      - bot_network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U botuser"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   bot:
     build:
       context: .
       dockerfile: dockerfile
-    container_name: discord_bot
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      DISCORD_TOKEN: ${DISCORD_TOKEN}
-      DATABASE_URL: postgresql://botuser:${DB_PASSWORD}@postgres:5432/discord_bot
-      RUST_LOG: info
-    networks:
-      - bot_network
+    container_name: discord-bot
     restart: unless-stopped
 
-volumes:
-  postgres_data:
+    environment:
+      # Discord Configuration
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
 
-networks:
-  bot_network:
-    driver: bridge
+      # Database Configuration
+      # Format: postgresql://username:password@hostname:5432/database
+      - DATABASE_URL=${DATABASE_URL}
+
+      # Logging
+      - RUST_LOG=${RUST_LOG:-info}
+      - RUST_BACKTRACE=${RUST_BACKTRACE:-0}
+
+    # If your PostgreSQL is in another Docker container on the same host,
+    # you can reference it by service name or container name
+    # Uncomment and adjust the network configuration below if needed
+
+    # networks:
+    #   - coolify  # or whatever network name your PostgreSQL container uses
+
+    # Health check (optional but recommended)
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep bot || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+# Uncomment this if you need to connect to an external PostgreSQL container
+# and specify the network name that your PostgreSQL container is using
+# networks:
+#   coolify:
+#     external: true

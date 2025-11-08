@@ -67,7 +67,7 @@ async fn main() -> anyhow::Result<()> {
     let db = PgPool::connect(&db_url).await?;
     println!("Conectado a la base de datos ✅");
 
-        let _ = sqlx::query!(
+        let _ = sqlx::query(
             "CREATE TABLE IF NOT EXISTS guild_config (
                 guild_id BIGINT PRIMARY KEY,
                 guild_name TEXT,

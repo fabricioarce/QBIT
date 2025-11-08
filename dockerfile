@@ -1,45 +1,48 @@
 # Build stage
-FROM rust:1.75-slim as builder
+FROM rust:1.91-bullseye as builder
 
-# Instalar dependencias del sistema
+WORKDIR /usr/src/app
+
+# Copy manifests
+COPY Cargo.toml Cargo.lock ./
+
+# Copy source code and sqlx data
+COPY src ./src
+COPY .sqlx ./.sqlx
+
+# Install dependencies needed for building
 RUN apt-get update && apt-get install -y \
-    pkg-config \
     libssl-dev \
+    pkg-config \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Crear directorio de trabajo
-WORKDIR /app
-
-# Copiar todo el código fuente
-COPY Cargo.toml ./
-COPY src ./src
-
-# Compilar la aplicación
+# Build the application in release mode
 RUN cargo build --release
 
 # Runtime stage
-FROM debian:bookworm-slim
+FROM debian:bullseye-slim
 
-# Instalar dependencias de runtime
-RUN apt-get update && apt-get install -y \
-    ca-certificates \
-    libssl3 \
-    && rm -rf /var/lib/apt/lists/*
-
-# Crear usuario no-root
-RUN useradd -m -u 1000 botuser
-
-# Crear directorio de trabajo
 WORKDIR /app
 
-# Copiar el binario compilado desde el build stage
-COPY --from=builder /app/target/release/bot-olim-p-code .
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    libssl1.1 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Cambiar permisos
-RUN chown -R botuser:botuser /app
+# Create a non-root user
+RUN useradd -m -u 1000 botuser && chown -R botuser:botuser /app
 
-# Cambiar a usuario no-root
+# Copy the binary from builder
+COPY --from=builder /usr/src/app/target/release/bot-olim-p-code /app/bot
+
+# Switch to non-root user
 USER botuser
 
-# Comando para ejecutar el bot
-CMD ["./bot-olim-p-code"]
+# Set environment variables
+ENV RUST_LOG=info
+ENV RUST_BACKTRACE=1
+
+# Run the bot
+CMD ["/app/bot"]

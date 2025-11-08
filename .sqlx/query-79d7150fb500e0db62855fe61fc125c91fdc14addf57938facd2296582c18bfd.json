@@ -1,0 +1,12 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "CREATE TABLE IF NOT EXISTS guild_config (\n                guild_id BIGINT PRIMARY KEY,\n                guild_name TEXT,\n                guild_prefix TEXT DEFAULT '!',\n                welcome_channel_id BIGINT,\n                daily_channel_id BIGINT,\n                daily_hour INT,\n                daily_minute INT,\n                min_rating INT DEFAULT 800,\n                max_rating INT DEFAULT 1200,\n                level_system_enabled BOOLEAN DEFAULT true\n            )",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": []
+  },
+  "hash": "79d7150fb500e0db62855fe61fc125c91fdc14addf57938facd2296582c18bfd"
+}
