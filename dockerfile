@@ -17,6 +17,10 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+# Set timezone to Costa Rica
+ENV TZ=America/Costa_Rica
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # Build the application in release mode
 RUN cargo build --release
 
