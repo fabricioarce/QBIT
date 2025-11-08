@@ -1,67 +1,24 @@
-# Git
+# Archivos de desarrollo
+target/
 .git/
 .gitignore
-.gitattributes
-
-# Build artifacts
-target/
-dist/
-build/
-
-# Environment files
 .env
-.env.local
-.env.*.local
-
-# Logs
 *.log
-logs/
 
-# Documentation
-README.md
-README.docker.md
+# Documentación
 docs/
+README.md
 *.md
-!Cargo.md
 
-# IDE and editor files
-.vscode/
-.idea/
+# Archivos temporales
 *.swp
 *.swo
 *~
-.DS_Store
+**/.DS_Store
 
-# CI/CD
-.github/
-.gitlab-ci.yml
-azure-pipelines.yml
+# Archivos de Cargo
+Cargo.lock
 
-# Docker files (not needed in the image)
-dockerfile
-Dockerfile
-docker-compose.yaml
-docker-compose.yml
-.dockerignore
-
-# Testing
-coverage/
-*.test
-test-results/
-
-# Node modules (if any)
-node_modules/
-
-# Rust specific
-**/*.rs.bk
-Cargo.lock.bk
-
-# Temporary files
-tmp/
-temp/
-*.tmp
-*.bak
-
-# OS files
-Thumbs.db
-.DS_Store
+# Otros
+.vscode/
+.idea/
