@@ -94,12 +94,9 @@ pub async fn start_daily_task(
                 // =====================
 
                 // Get channel and guild IDs
-                let channel_id = match server
-                    .try_get::<Option<i64>, _>("daily_channel_id")
-                    .unwrap_or_default()
-                {
-                    Some(id) => id,
-                    _none => continue, // no channel configured
+                let channel_id = match server.try_get::<i64, _>("daily_channel_id") {
+                    Ok(id) => id,
+                    Err(_) => continue, // error getting channel_id
                 };
                 let guild_id = server.try_get::<i64, _>("guild_id").unwrap_or(0);
 
@@ -228,7 +225,7 @@ pub async fn start_daily_task(
                             // Create message with guild mention and embed
                             let message = serenity::builder::CreateMessage::new()
                                 .content(format!(
-                                    "Hello <&{}>! Here's your daily problem:",
+                                    "Hello <@&{}>! Here's your daily problem:",
                                     guild_id
                                 ))
                                 .embed(embed);
