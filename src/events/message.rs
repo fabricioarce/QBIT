@@ -8,6 +8,7 @@ use crate::commands::codeforces::problem;
 use crate::commands::codeforces::setchannel;
 use crate::commands::codeforces::sethour;
 use crate::commands::codeforces::solved;
+use crate::commands::economy::balance;
 use crate::Bot;
 use serenity::http::Http;
 use serenity::model::channel::Message;
@@ -66,6 +67,15 @@ pub async fn handle_message(bot: &Bot, http: &Arc<Http>, msg: Message) {
         if let Some(guild_id) = msg.guild_id {
             if let Ok(guild) = http.get_guild(guild_id).await {
                 let _ = solved::execute(http, &msg, &bot.db, &guild).await;
+            }
+        }
+    }
+
+    // Handle balance command - show user's coin balance
+    if msg.content == "!balance" {
+        if let Some(guild_id) = msg.guild_id {
+            if let Ok(guild) = http.get_guild(guild_id).await {
+                let _ = balance::execute(http, &msg, &bot.db, &guild).await;
             }
         }
     }

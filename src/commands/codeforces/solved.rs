@@ -200,19 +200,50 @@ pub async fn execute(
                 .await
                 {
                     Ok(_) => {
-                        let _ = msg
-                            .channel_id
-                            .say(
-                                http,
-                                &format!(
-                                    "🎉 **¡Problema resuelto verificado!**\n\n\
-                                    ✅ El problema `{}` ha sido marcado como resuelto.\n\
-                                    👤 Usuario: `{}`\n\
-                                    🏆 ¡Felicitaciones por la solución exitosa!",
-                                    problem_id, user_handle
-                                ),
-                            )
-                            .await;
+                        // Award 1 coin for solving the problem
+                        match sqlx::query(
+                            "UPDATE user_info SET coins = coins + 1 WHERE guild_id = $1 AND user_id = $2"
+                        )
+                        .bind(guild.id.get() as i64)
+                        .bind(msg.author.id.get() as i64)
+                        .execute(db)
+                        .await
+                        {
+                            Ok(_) => {
+                                let _ = msg
+                                    .channel_id
+                                    .say(
+                                        http,
+                                        &format!(
+                                            "🎉 **¡Problema resuelto verificado!**\n\n\
+                                            ✅ El problema `{}` ha sido marcado como resuelto.\n\
+                                            👤 Usuario: `{}`\n\
+                                            💰 **+1 moneda ganada!**\n\
+                                            🏆 ¡Felicitaciones por la solución exitosa!",
+                                            problem_id, user_handle
+                                        ),
+                                    )
+                                    .await;
+                            }
+                            Err(e) => {
+                                eprintln!("Database error updating coins: {}", e);
+                                // Still notify about solved problem, even if coins failed
+                                let _ = msg
+                                    .channel_id
+                                    .say(
+                                        http,
+                                        &format!(
+                                            "🎉 **¡Problema resuelto verificado!**\n\n\
+                                            ✅ El problema `{}` ha sido marcado como resuelto.\n\
+                                            👤 Usuario: `{}`\n\
+                                            ⚠️ Hubo un error al otorgar la moneda, pero tu progreso fue guardado.\n\
+                                            🏆 ¡Felicitaciones por la solución exitosa!",
+                                            problem_id, user_handle
+                                        ),
+                                    )
+                                    .await;
+                            }
+                        }
                     }
                     Err(e) => {
                         eprintln!("Database error inserting solved problem: {}", e);
