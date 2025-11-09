@@ -3,9 +3,11 @@
 // =====================
 
 use crate::commands;
+use crate::commands::codeforces::account;
 use crate::commands::codeforces::problem;
 use crate::commands::codeforces::setchannel;
 use crate::commands::codeforces::sethour;
+use crate::commands::codeforces::solved;
 use crate::Bot;
 use serenity::http::Http;
 use serenity::model::channel::Message;
@@ -48,5 +50,23 @@ pub async fn handle_message(bot: &Bot, http: &Arc<Http>, msg: Message) {
     // Handle set channel command - configure which channel receives daily problems
     if msg.content.starts_with("!setchannel ") {
         let _ = setchannel::execute(http, &msg, &bot.db).await;
+    }
+
+    // Handle account command - link Codeforces account to Discord user
+    if msg.content.starts_with("!account ") {
+        if let Some(guild_id) = msg.guild_id {
+            if let Ok(guild) = http.get_guild(guild_id).await {
+                let _ = account::execute(http, &msg, &bot.db, &guild).await;
+            }
+        }
+    }
+
+    // Handle solved command - verify if a problem is solved and mark it
+    if msg.content.starts_with("!solved ") {
+        if let Some(guild_id) = msg.guild_id {
+            if let Ok(guild) = http.get_guild(guild_id).await {
+                let _ = solved::execute(http, &msg, &bot.db, &guild).await;
+            }
+        }
     }
 }

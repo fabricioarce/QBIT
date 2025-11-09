@@ -120,6 +120,38 @@ async fn main() -> anyhow::Result<()> {
     .execute(&db)
     .await?;
 
+    // Create user configuration table if it doesn't exist
+    let _ = sqlx::query(
+        "CREATE TABLE IF NOT EXISTS user_info (
+            guild_id BIGINT,
+            user_id BIGINT,
+            xp bigint DEFAULT 0,
+            level bigint DEFAULT 1,
+            coins bigint DEFAULT 0,
+            warns int DEFAULT 0,
+            codeforces_handle TEXT,
+            codeforces_rating INT DEFAULT 0,
+            codeforces_rank TEXT DEFAULT 'unrated',
+            primary key (guild_id, user_id),
+            foreign key (guild_id) references guild_config(guild_id)
+        )",
+    )
+    .execute(&db)
+    .await?;
+
+    // Create user_solved_problem table if it doesn't exist
+    let _ = sqlx::query(
+        "CREATE TABLE IF NOT EXISTS user_solved_problem (
+            guild_id BIGINT,
+            user_id BIGINT,
+            problem_id TEXT,
+            primary key (guild_id, user_id, problem_id),
+            foreign key (guild_id, user_id) references user_info(guild_id, user_id)
+        )",
+    )
+    .execute(&db)
+    .await?;
+
     // =====================
     //   Bot Instance Creation
     // =====================
