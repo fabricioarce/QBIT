@@ -374,6 +374,6 @@ For scaling, implement:
 
 ---
 
-**Last Updated:** November 7, 2024  
+**Last Updated:** November 7, 2025  
 **Version:** 1.0  
 **Deployment:** Coolify with External PostgreSQL

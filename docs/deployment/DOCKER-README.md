@@ -280,6 +280,6 @@ Good luck with your deployment! 🎉
 
 ---
 
-**Last Updated:** November 7, 2024  
+**Last Updated:** November 7, 2025  
 **Version:** 1.0  
 **Maintained by:** Farce
