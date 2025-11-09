@@ -6,7 +6,7 @@ use reqwest::{header, Client};
 use serde::Deserialize;
 
 // =====================
-//   API Response Structures
+//   API Problem Response Structures
 // =====================
 
 // Main response structure from Codeforces API
@@ -36,7 +36,7 @@ pub struct Problem {
 }
 
 // =====================
-//   Codeforces API Integration
+//   Codeforces Problem API Integration
 // =====================
 
 // Main function to fetch problems from Codeforces API
@@ -103,4 +103,43 @@ pub async fn get_problems(
 
     // Return filtered response
     Ok(response)
+}
+
+// =====================
+//   API User Info Response Structures
+// =====================
+
+#[derive(Deserialize, Debug)]
+pub struct UserInfo {
+    pub status: String,
+    pub result: Vec<UserInfoData>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct UserInfoData {
+    pub handle: Option<String>,
+    pub country: Option<String>,
+    pub rank: Option<String>,
+    pub rating: Option<i32>,
+    pub maxRank: Option<String>,
+    pub maxRating: Option<i32>,
+}
+
+pub async fn get_user_info(
+    handle: &str,
+) -> Result<UserInfo, Box<dyn std::error::Error + Send + Sync>> {
+    // Initialize HTTP client for API requests
+    let client = Client::new();
+    let url = format!("https://codeforces.com/api/user.info?handles={}", handle);
+
+    // Make GET request to Codeforces API with User-Agent header
+    let response = client
+        .get(&url)
+        .header(header::USER_AGENT, "discord-bot/1.0")
+        .send()
+        .await?;
+
+    let user_info: UserInfo = response.json().await?;
+
+    Ok(user_info)
 }

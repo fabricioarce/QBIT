@@ -122,7 +122,7 @@ async fn main() -> anyhow::Result<()> {
 
     // Create user configuration table if it doesn't exist
     let _ = sqlx::query(
-        "CREATE TABLE IF NOT EXISTS user_config (
+        "CREATE TABLE IF NOT EXISTS user_info (
             guild_id BIGINT,
             user_id BIGINT,
             xp bigint DEFAULT 0,
@@ -146,7 +146,7 @@ async fn main() -> anyhow::Result<()> {
             user_id BIGINT,
             problem_id TEXT,
             primary key (guild_id, user_id, problem_id),
-            foreign key (guild_id, user_id) references user_config(guild_id, user_id)
+            foreign key (guild_id, user_id) references user_info(guild_id, user_id)
         )",
     )
     .execute(&db)
