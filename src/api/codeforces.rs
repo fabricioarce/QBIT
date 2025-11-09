@@ -125,6 +125,59 @@ pub struct UserInfoData {
     pub maxRating: Option<i32>,
 }
 
+// =====================
+//   API User Status Response Structures
+// =====================
+
+#[derive(Deserialize, Debug)]
+pub struct UserStatus {
+    pub status: String,
+    pub result: Vec<Submission>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct Submission {
+    // pub id: u64,
+    // pub contestId: Option<u32>,
+    // pub creationTimeSeconds: Option<u64>,
+    // pub relativeTimeSeconds: Option<i64>,
+    pub problem: SubmissionProblem,
+    // pub author: Author,
+    // pub programmingLanguage: Option<String>,
+    pub verdict: Option<String>,
+    // pub testset: Option<String>,
+    // pub passedTestCount: Option<u32>,
+    // pub timeConsumedMillis: Option<u32>,
+    // pub memoryConsumedBytes: Option<u64>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct SubmissionProblem {
+    pub contestId: Option<u32>,
+    pub index: String,
+    // pub name: String,
+    // #[serde(rename = "type")]
+    // pub problem_type: Option<String>,
+    // pub points: Option<f32>,
+    // pub rating: Option<u32>,
+    // pub tags: Option<Vec<String>>,
+}
+
+// #[derive(Deserialize, Debug)]
+// pub struct Author {
+//     pub contestId: Option<u32>,
+//     pub participantId: Option<u64>,
+//     pub members: Vec<Member>,
+//     pub participantType: Option<String>,
+//     pub ghost: Option<bool>,
+//     pub startTimeSeconds: Option<u64>,
+// }
+
+// #[derive(Deserialize, Debug)]
+// pub struct Member {
+//     pub handle: String,
+// }
+
 pub async fn get_user_info(
     handle: &str,
 ) -> Result<UserInfo, Box<dyn std::error::Error + Send + Sync>> {
@@ -142,4 +195,28 @@ pub async fn get_user_info(
     let user_info: UserInfo = response.json().await?;
 
     Ok(user_info)
+}
+
+// =====================
+//   Codeforces User Status API Integration
+// =====================
+
+// Function to fetch user submissions from Codeforces API
+pub async fn get_user_status(
+    handle: &str,
+) -> Result<UserStatus, Box<dyn std::error::Error + Send + Sync>> {
+    // Initialize HTTP client for API requests
+    let client = Client::new();
+    let url = format!("https://codeforces.com/api/user.status?handle={}", handle);
+
+    // Make GET request to Codeforces API with User-Agent header
+    let response = client
+        .get(&url)
+        .header(header::USER_AGENT, "discord-bot/1.0")
+        .send()
+        .await?;
+
+    let user_status: UserStatus = response.json().await?;
+
+    Ok(user_status)
 }
